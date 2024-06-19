@@ -41,21 +41,22 @@ jobs:
       with:
         name: build-artifact
 
-    - name: Copy JAR to EC2
-      env:
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_KEY: ${{ secrets.EC2_KEY }}
+    - name: Setup SSH key
       run: |
-        scp -i $EC2_KEY build/libs/helloworld-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ec2-user/helloworld-0.0.1-SNAPSHOT.jar
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Add EC2 host to known_hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Copy JAR to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa build/libs/helloworld-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar
 
     - name: SSH and Run JAR
-      env:
-        EC2_USER: ${{ secrets.EC2_USER }}
-        EC2_HOST: ${{ secrets.EC2_HOST }}
-        EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
-        ssh -i $EC2_KEY $EC2_USER@$EC2_HOST << 'EOF'
-          nohup java -jar /home/ec2-user/helloworld-0.0.1-SNAPSHOT.jar > /home/ec2-user/helloworld.log 2>&1 &
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          nohup java -jar /home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/helloworld.log 2>&1 &
         EOF
