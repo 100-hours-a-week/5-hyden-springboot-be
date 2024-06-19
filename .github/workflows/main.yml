@@ -26,7 +26,7 @@ jobs:
       run: ./gradlew clean build
 
     - name: List build directory
-      run: ls -la build/libs
+      run: ls -al build/libs
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v2
@@ -44,6 +44,9 @@ jobs:
       with:
         name: build-artifact
 
+    - name: List current directory
+      run: ls -al
+
     - name: Setup SSH key
       run: |
         mkdir -p ~/.ssh
@@ -60,10 +63,7 @@ jobs:
 
     - name: Copy JAR to EC2
       run: |
-        ls -al
-        cd /runner
-        ls -al
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa /runner/build/libs/helloworld-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa helloworld-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar
 
     - name: SSH and Run JAR
       run: |
