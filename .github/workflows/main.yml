@@ -25,21 +25,21 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build
 
-    - name: Upload artifact
+    - name: Upload build artifact
       uses: actions/upload-artifact@v2
       with:
-        name: jar-file
-        path: build/libs/demo-0.0.1-SNAPSHOT.jar
+        name: build-artifact
+        path: build/libs/helloworld-0.0.1-SNAPSHOT.jar
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-    - name: Download artifact
+    - name: Download build artifact
       uses: actions/download-artifact@v2
       with:
-        name: jar-file
+        name: build-artifact
 
     - name: Copy JAR to EC2
       env:
@@ -48,7 +48,7 @@ jobs:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
-        scp -i $EC2_KEY demo-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ec2-user/demo-0.0.1-SNAPSHOT.jar
+        scp -i $EC2_KEY build/libs/helloworld-0.0.1-SNAPSHOT.jar $EC2_USER@$EC2_HOST:/home/ec2-user/helloworld-0.0.1-SNAPSHOT.jar
 
     - name: SSH and Run JAR
       env:
@@ -57,5 +57,5 @@ jobs:
         EC2_KEY: ${{ secrets.EC2_KEY }}
       run: |
         ssh -i $EC2_KEY $EC2_USER@$EC2_HOST << 'EOF'
-          nohup java -jar /home/ec2-user/demo-0.0.1-SNAPSHOT.jar > /home/ec2-user/demo.log 2>&1 &
+          nohup java -jar /home/ec2-user/helloworld-0.0.1-SNAPSHOT.jar > /home/ec2-user/helloworld.log 2>&1 &
         EOF
