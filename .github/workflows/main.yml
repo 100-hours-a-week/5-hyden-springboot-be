@@ -25,6 +25,21 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew clean build
 
+      # Docker 이미지 Build
+    - name: docker image build
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong .
+
+      # DockerHub Login (push 하기 위해)
+    - name: docker login
+      uses: docker/login-action@v3.2.0
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Docker hub 로 push
+    - name: Docker Hub push
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+
     - name: List build directory
       run: ls -al build/libs
 
@@ -61,12 +76,31 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} echo "SSH connection successful"
 
-    - name: Copy JAR to EC2
-      run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa helloworld-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar
+#    - name: Copy JAR to EC2
+#      run: |
+#        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa helloworld-0.0.1-SNAPSHOT.jar ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar
 
-    - name: SSH and Run JAR
+#    - name: SSH and Run JAR
+#      run: |
+#        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+#          nohup java -jar /home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/helloworld.log 2>&1 &
+#        EOF
+
+
+    - name: SSH and Deploy Docker
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          nohup java -jar /home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/helloworld.log 2>&1 &
+          # Docker Pull
+          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+        
+          # Docker Stop Container if exists
+          if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
+            sudo docker stop spring-ggangtong
+          fi
+        
+          # Docker Run New Container
+          sudo docker run --rm -it -d -p 8083:8080 --name spring-ggangtong ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+        
+          # Delete Old Docker Image
+          sudo docker system prune -f
         EOF
