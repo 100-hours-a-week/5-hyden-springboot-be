@@ -99,7 +99,7 @@ jobs:
           fi
         
           # Docker Run New Container
-          sudo docker run --rm -it -d -p 8083:8080 --name spring-ggangtong ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+          sudo docker run --rm -it -d -p 8083:8090 --name spring-ggangtong ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
         
           # Delete Old Docker Image
           sudo docker system prune -f
