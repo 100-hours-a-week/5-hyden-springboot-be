@@ -47,7 +47,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: build-artifact
-        path: build/libs/helloworld-0.0.1-SNAPSHOT.jar
+        path: build/libs/app.jar
 
   deploy:
     runs-on: ubuntu-latest
