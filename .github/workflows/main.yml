@@ -42,7 +42,9 @@ jobs:
 
 
     # Image push to AWS ECR
-    - name: Docker push to ECR
+    - name: Docker image tagging
+      run: docker tag hyden-server:latest 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+    - name : Docker push to ECR
       run: docker push 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
 
 
