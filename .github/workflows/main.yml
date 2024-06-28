@@ -29,16 +29,23 @@ jobs:
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong .
 
-      # DockerHub Login (push 하기 위해)
-    - name: docker login
-      uses: docker/login-action@v3.2.0
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      # DockerHub Login (push 하기 위해)
+#    - name: docker login
+#      uses: docker/login-action@v3.2.0
+#      with:
+#        username: ${{ secrets.DOCKERHUB_USERNAME }}
+#        password: ${{ secrets.DOCKERHUB_TOKEN }}
+#
+#      # Docker hub 로 push
+#    - name: Docker Hub push
+#      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
 
-      # Docker hub 로 push
-    - name: Docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+
+    # Image push to AWS ECR
+    - name: Docker push to ECR
+      run: docker push 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+
+
 
     - name: List build directory
       run: ls -al build/libs

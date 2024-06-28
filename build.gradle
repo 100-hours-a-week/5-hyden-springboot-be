@@ -28,6 +28,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// Build image will be named app.jar,
 bootJar{
     archiveBaseName = 'app'
     archiveVersion = ''
