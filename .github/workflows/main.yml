@@ -128,6 +128,7 @@ jobs:
           # Docker Pull
           # sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
           sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+          ls -al
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
             sudo docker stop spring-ggangtong
