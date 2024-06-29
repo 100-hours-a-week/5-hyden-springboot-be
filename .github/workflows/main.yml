@@ -107,26 +107,27 @@ jobs:
 #          nohup java -jar /home/${{ secrets.EC2_USER }}/helloworld-0.0.1-SNAPSHOT.jar > /home/${{ secrets.EC2_USER }}/helloworld.log 2>&1 &
 #        EOF
 
-      # Image pull from AWS ECR
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-northeast-2
-
-    - name: Login to ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    - name : Docker push to ECR
-      run: docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+#      # Image pull from AWS ECR
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v4
+#      with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: ap-northeast-2
+#
+#    - name: Login to ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
+#
+#    - name : Docker pull from ECR
+#      run: docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
 
     - name: SSH and Deploy Docker
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # Docker Pull
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
-        
+#          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+          sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
             sudo docker stop spring-ggangtong
