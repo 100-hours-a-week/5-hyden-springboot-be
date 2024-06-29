@@ -126,7 +126,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
           # Docker Pull
-#          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+          # sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
           sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
