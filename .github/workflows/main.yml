@@ -122,20 +122,42 @@ jobs:
 #    - name : Docker pull from ECR
 #      run: docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
 
+#    - name: SSH and Deploy Docker
+#      run: |
+#        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+#          # Docker Pull
+#          # sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+#          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com
+#          sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+#          ls -al
+#          # Docker Stop Container if exists
+#          # if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
+#            sudo docker stop spring-ggangtong
+#          fi
+#
+#          # Docker Run New Container
+#          sudo docker run --rm -it -d -p 8083:8090 --name spring-ggangtong ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+#
+#          # Delete Old Docker Image
+#          sudo docker system prune -f
+#        EOF
+
     - name: SSH and Deploy Docker
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          # Docker login to aws
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com
+          
           # Docker Pull
-          # sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
           sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
-          ls -al
+          
           # Docker Stop Container if exists
-          if [ $(sudo docker ps -a -q -f name=spring-ggangtong) ]; then
-            sudo docker stop spring-ggangtong
+          if [ $(sudo docker ps -a -q -f name=hyden-server) ]; then
+            sudo docker stop hyden-server
           fi
         
           # Docker Run New Container
-          sudo docker run --rm -it -d -p 8083:8090 --name spring-ggangtong ${{ secrets.DOCKERHUB_USERNAME }}/spring-ggangtong
+          sudo docker run --rm -it -d -p 8083:8090 --name hyden-server 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server
         
           # Delete Old Docker Image
           sudo docker system prune -f
