@@ -174,7 +174,7 @@ jobs:
 
           # Docker Pull
           sudo docker pull ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
-
+          sudo docker ps -a
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=hyden-server) ]; then
             sudo docker stop hyden-server
