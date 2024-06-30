@@ -142,23 +142,50 @@ jobs:
 #          sudo docker system prune -f
 #        EOF
 
+#    - name: SSH and Deploy Docker
+#      run: |
+#        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+#          # Docker login to aws
+#          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com
+#
+#          # Docker Pull
+#          sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+#
+#          # Docker Stop Container if exists
+#          if [ $(sudo docker ps -a -q -f name=hyden-server) ]; then
+#            sudo docker stop hyden-server
+#          fi
+#
+#          # Docker Run New Container
+#          sudo docker run --rm -it -d -p 8083:8090 --name hyden-server 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server
+#
+#          # Delete Old Docker Image
+#          sudo docker system prune -f
+#        EOF
+
+
+
+
     - name: SSH and Deploy Docker
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec-user@ec2-13-124-40-67.ap-northeast-2.compute.amazonaws.com << 'EOF'
           # Docker login to aws
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com
-          
+
           # Docker Pull
           sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
-          
+
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=hyden-server) ]; then
             sudo docker stop hyden-server
           fi
-        
+
           # Docker Run New Container
           sudo docker run --rm -it -d -p 8083:8090 --name hyden-server 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server
-        
+
           # Delete Old Docker Image
           sudo docker system prune -f
         EOF
+
+
+
