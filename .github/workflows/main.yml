@@ -170,10 +170,10 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EB_EC2_USER }}@${{ secrets.EB_EC2_HOST }} << 'EOF'
           # Docker login to aws
-          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_HOST }}
 
           # Docker Pull
-          sudo docker pull 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
+          sudo docker pull ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}:latest
 
           # Docker Stop Container if exists
           if [ $(sudo docker ps -a -q -f name=hyden-server) ]; then
@@ -181,7 +181,7 @@ jobs:
           fi
 
           # Docker Run New Container
-          sudo docker run --rm -it -d -p 8083:8090 --name hyden-server 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server
+          sudo docker run --rm -it -d -p 8083:8090 --name hyden-server ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
 
           # Delete Old Docker Image
           sudo docker system prune -f
