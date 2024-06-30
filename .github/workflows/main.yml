@@ -170,7 +170,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EB_EC2_USER }}@${{ secrets.EB_EC2_HOST }} << 'EOF'
           # Docker login to aws
-          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_HOST }}
+          aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
 
           # Docker Pull
           sudo docker pull ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}:latest
