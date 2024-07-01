@@ -21,4 +21,5 @@ COPY nginx-conf/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8083 80
 
 # Command to run the application and Nginx
-CMD ["sh", "-c", "java -jar /app.jar & nginx -g 'daemon off;'"]
+#CMD ["sh", "-c", "java -jar /app.jar & nginx -g 'daemon off;'"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
