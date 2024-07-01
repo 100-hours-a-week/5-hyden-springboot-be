@@ -184,11 +184,11 @@ jobs:
           docker run --rm -it -d -p 8083:8090 --name hyden-server ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
           sudo docker ps -a
           sudo docker logs hyden-server
-        
-          # Delete Old Docker Image
-          docker system prune -f
-        
-          sudo service nginx reload
+#
+#          # Delete Old Docker Image
+#          docker system prune -f
+#
+#          sudo service nginx reload
         EOF
 
 
