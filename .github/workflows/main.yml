@@ -163,17 +163,17 @@ jobs:
 #          sudo docker system prune -f
 #        EOF
 
-
     - name: Copy Nginx configuration to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r nginx-conf ${{ secrets.EB_EC2_USER }}@${{ secrets.EB_EC2_HOST }}:/home/${{ secrets.EB_EC2_USER }}/nginx-conf
+        ls -al
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./nginx-conf ${{ secrets.EB_EC2_USER }}@${{ secrets.EB_EC2_HOST }}:/home/${{ secrets.EB_EC2_USER }}/nginx-conf
 
     - name: SSH and Deploy Docker
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{ secrets.EB_EC2_USER }}@${{ secrets.EB_EC2_HOST }} << 'EOF'
           
           # Move nginx configuration file to approval path 
-          sudo mv /home/${{ secrets.EB_EC2_USER }}/nginx-conf /var/app/current/nginx-conf
+          sudo mv /home/${{ secrets.EB_EC2_USER }}/nginx-conf /etc/nginx/conf.d
         
           # Docker login to aws
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
