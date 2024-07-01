@@ -180,12 +180,10 @@ jobs:
           fi
 
           # Docker Run New Container
-          echo "Running new Docker container..."
           docker run --rm -it -d -p 8083:8090 --name hyden-server ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
-          sudo docker ps -a
-          sudo docker logs hyden-server
+          
+          # Delete Old Docker Image
+          docker system prune -f
+          sudo service nginx reload
+        
         EOF
-#          # Delete Old Docker Image
-#          docker system prune -f
-#
-#          sudo service nginx reload
