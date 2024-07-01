@@ -9,6 +9,6 @@ public class HelloWorldController {
 
     @GetMapping("/hello-world")
     public String helloWorld() {
-        return "Hello World!";
+        return "CI/CD with Elastic Beanstalk is succeeded!";
     }
 }
