@@ -59,7 +59,9 @@ jobs:
     - name : Docker push to ECR
       run: docker push 527078100140.dkr.ecr.ap-northeast-2.amazonaws.com/hyden-server:latest
 
-
+    - name: Copy nginx_conf to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa nginx-conf/elasticbeanstalk-nginx-docker-upstream.conf ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/etc/nginx/conf.d/elasticbeanstalk-nginx-docker-upstream.conf
 
     - name: List build directory
       run: ls -al build/libs
@@ -162,6 +164,7 @@ jobs:
 #          # Delete Old Docker Image
 #          sudo docker system prune -f
 #        EOF
+
 
 
     - name: SSH and Deploy Docker
