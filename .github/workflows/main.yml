@@ -172,8 +172,8 @@ jobs:
           
           # Docker permission update
           sudo usermod -aG docker ${{secrets.EB_EC2_USER}}
-          sudo usermod -aG docker withus
-          
+          sudo chmod 666 /var/run/docker.sock
+        
           # Docker login to aws
           aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_HOST }}/${{ secrets.ECR_NAME }}
 
